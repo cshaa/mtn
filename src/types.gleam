@@ -35,7 +35,7 @@ pub fn primitive_debug(s: Primitive) -> String {
 // Function
 
 pub type FunctionArgument {
-  FunctionArgument(name: String, typ: Type)
+  FunctionArgument(name: String, typ: ValueType)
 }
 
 pub fn function_argument_satisfies(
@@ -44,24 +44,24 @@ pub fn function_argument_satisfies(
 ) -> Bool {
   case s, o {
     FunctionArgument(_, contravariant_s), FunctionArgument(_, contravariant_o) ->
-      type_satisfies(contravariant_o, contravariant_s)
+      value_type_satisfies(contravariant_o, contravariant_s)
   }
 }
 
 pub fn function_argument_debug(s: FunctionArgument) -> String {
   case s {
-    FunctionArgument(name, typ) -> name <> ": " <> type_debug(typ)
+    FunctionArgument(name, typ) -> name <> ": " <> value_type_debug(typ)
   }
 }
 
 pub type Function {
-  Function(arguments: List(FunctionArgument), return: Type)
+  Function(arguments: List(FunctionArgument), return: ValueType)
 }
 
 pub fn function_satisfies(s: Function, o: Function) -> Bool {
   case s, o {
     Function(args_s, ret_s), Function(args_o, ret_o) ->
-      type_satisfies(ret_s, ret_o)
+      value_type_satisfies(ret_s, ret_o)
       // don't allow arity mismatch
       && list.length(args_s) == list.length(args_o)
       && list.zip(args_s, args_o)
@@ -77,7 +77,7 @@ pub fn function_debug(s: Function) -> String {
       |> list.map(function_argument_debug)
       |> string.join(", ")
       <> "): "
-      <> type_debug(ret)
+      <> value_type_debug(ret)
   }
 }
 
@@ -116,18 +116,18 @@ pub fn trait_satisfies(subject: Trait, other: Trait) -> Bool {
 // Struct
 
 pub type StructField {
-  StructField(name: String, typ: Type)
+  StructField(name: String, typ: ValueType)
 }
 
 pub fn struct_field_debug(s: StructField) -> String {
   case s {
-    StructField(name, typ) -> name <> ": " <> type_debug(typ)
+    StructField(name, typ) -> name <> ": " <> value_type_debug(typ)
   }
 }
 
 pub type Struct {
   StructNamed(id: UniqueId, fields: List(StructField))
-  StructTuple(id: UniqueId, data: List(Type))
+  StructTuple(id: UniqueId, data: List(ValueType))
 }
 
 pub fn struct_satisfies(subject: Struct, other: Struct) -> Bool {
@@ -151,7 +151,7 @@ pub fn struct_debug(s: Struct) -> String {
       <> id
       <> "("
       <> data
-      |> list.map(type_debug)
+      |> list.map(value_type_debug)
       |> string.join(", ")
       <> ")"
   }
@@ -182,7 +182,7 @@ pub fn enum_variant_debug(s: EnumVariant) -> String {
           name
           <> "("
           <> data
-          |> list.map(type_debug)
+          |> list.map(value_type_debug)
           |> string.join(", ")
           <> ")"
       }
@@ -214,37 +214,37 @@ pub fn enum_debug(s: Enum) {
 //
 // Type
 
-pub type Type {
-  TypeNever
-  TypePrimitive(Primitive)
-  TypeFunction(Function)
-  TypeTrait(Trait)
-  TypeStruct(Struct)
-  TypeEnum(Enum)
+pub type ValueType {
+  ValueTypeNever
+  ValueTypePrimitive(Primitive)
+  ValueTypeFunction(Function)
+  ValueTypeTrait(Trait)
+  ValueTypeStruct(Struct)
+  ValueTypeEnum(Enum)
 }
 
-fn type_debug(s: Type) -> String {
+fn value_type_debug(s: ValueType) -> String {
   case s {
-    TypeNever -> "never"
-    TypePrimitive(p) -> primitive_debug(p)
-    TypeTrait(t) -> trait_debug(t)
-    TypeFunction(f) -> function_debug(f)
-    TypeStruct(s) -> struct_debug(s)
-    TypeEnum(e) -> enum_debug(e)
+    ValueTypeNever -> "never"
+    ValueTypePrimitive(p) -> primitive_debug(p)
+    ValueTypeTrait(t) -> trait_debug(t)
+    ValueTypeFunction(f) -> function_debug(f)
+    ValueTypeStruct(s) -> struct_debug(s)
+    ValueTypeEnum(e) -> enum_debug(e)
   }
 }
 
-pub fn type_satisfies(subject: Type, other: Type) -> Bool {
+pub fn value_type_satisfies(subject: ValueType, other: ValueType) -> Bool {
   case subject, other {
     _, _ if subject == other -> True
 
-    TypeNever, _ -> True
+    ValueTypeNever, _ -> True
 
-    TypePrimitive(s), TypePrimitive(t) -> primitive_satisfies(s, t)
-    TypeFunction(s), TypeFunction(t) -> function_satisfies(s, t)
-    TypeTrait(s), TypeTrait(t) -> trait_satisfies(s, t)
-    TypeStruct(s), TypeStruct(t) -> struct_satisfies(s, t)
-    TypeEnum(s), TypeEnum(t) -> enum_satisfies(s, t)
+    ValueTypePrimitive(s), ValueTypePrimitive(t) -> primitive_satisfies(s, t)
+    ValueTypeFunction(s), ValueTypeFunction(t) -> function_satisfies(s, t)
+    ValueTypeTrait(s), ValueTypeTrait(t) -> trait_satisfies(s, t)
+    ValueTypeStruct(s), ValueTypeStruct(t) -> struct_satisfies(s, t)
+    ValueTypeEnum(s), ValueTypeEnum(t) -> enum_satisfies(s, t)
 
     _, _ -> False
   }

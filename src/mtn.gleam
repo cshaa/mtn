@@ -1,5 +1,5 @@
-import gleam/io
 import gleam/bool
+import gleam/io
 import types
 
 pub fn main() {
@@ -9,9 +9,9 @@ pub fn main() {
   io.println("Hello from mtn!")
 
   io.print(
-    bool.to_string(types.type_satisfies(
-      types.TypeTrait(dog),
-      types.TypeTrait(animal),
+    bool.to_string(types.value_type_satisfies(
+      types.ValueTypeTrait(dog),
+      types.ValueTypeTrait(animal),
     )),
   )
 }

@@ -85,12 +85,12 @@ pub fn function_test() {
   let animal = types.Trait("Animal", [])
   let dog = types.Trait("Dog", [animal])
 
-  let void = types.TypePrimitive(types.PrimitiveVoid)
-  let bool = types.TypePrimitive(types.PrimitiveBoolean)
-  let never = types.TypeNever
-  let i32 = types.TypePrimitive(types.PrimitiveSignedInteger(32))
-  let animal = types.TypeTrait(animal)
-  let dog = types.TypeTrait(dog)
+  let void = types.ValueTypePrimitive(types.PrimitiveVoid)
+  let bool = types.ValueTypePrimitive(types.PrimitiveBoolean)
+  let never = types.ValueTypeNever
+  let i32 = types.ValueTypePrimitive(types.PrimitiveSignedInteger(32))
+  let animal = types.ValueTypeTrait(animal)
+  let dog = types.ValueTypeTrait(dog)
 
   let none_to_void = types.Function([], void)
   let bool_to_void = types.Function([types.FunctionArgument("arg", bool)], void)
