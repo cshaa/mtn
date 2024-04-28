@@ -9,7 +9,7 @@ pub fn main() {
   io.println("Hello from mtn!")
 
   io.print(
-    bool.to_string(types.value_type_satisfies(
+    bool.to_string(types.value_type_is_subtype_of(
       types.ValueTypeTrait(dog),
       types.ValueTypeTrait(animal),
     )),
